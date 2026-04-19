@@ -5,7 +5,7 @@ SETTINGS.update({"datasets_dir": "."})
 
 def train():
 
-    model = YOLO("yolov8n.pt")
+    model = YOLO("yolov11l.pt")
 
     model.train(
         data="data/data.yaml",

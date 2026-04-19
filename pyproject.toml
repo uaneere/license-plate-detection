@@ -3,6 +3,7 @@ name = "license-plate-detection"
 version = "0.1.0"
 description = "License plate detection system using YOLO"
 authors = ["uaneere <rus.agafonov29@gmail.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -20,6 +21,7 @@ matplotlib = "^3.7.0"
 seaborn = "^0.12.0"
 tqdm = "^4.65.0"
 scikit-learn = "^1.3.0"
+notebook = "^7.5.5"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.0.0"
