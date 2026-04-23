@@ -1,94 +1,171 @@
-# License Plate Detection (YOLO)
-## Автор
+# License Plate Detection System
 
-- **ФИО:** Ruslan Agafonov & Angelina Chernikova
-- **Группа:** 972401
+**Student:** Ruslan Agafonov & Angelina Chernikova
+**Group:** 972401
 
-## Возможности
+## Description
 
-- Обучение модели на своем датасете (`train`)
-- Оценка качества на размеченном наборе (`evaluate`)
-- Обработка видеофайла с сохранением результата (`video`)
-- Логирование в `./data/log_file.log`
+License plate detection system using YOLO
 
-## Структура проекта
+## Project Structure
 
-- `main.py` — CLI entrypoint
-- `src/model_impl.py` — класс `My_LicensePlate_Model`
-- `src/train.py` — обучение
-- `src/evaluate.py` — валидация и метрики
-- `src/video_mode.py` — обработка видео
-- `Dockerfile`, `docker-compose.yaml` — контейнеризация
-
-## Требования
-
-- Python 3.10+
-- (Опционально) CUDA GPU для ускорения обучения/инференса
-
-Установка зависимостей:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+```
+license-plate-detection/
+├── src/
+│   ├── __init__.py
+│   ├── logger.py          # Logging (singleton)
+│   ├── model_impl.py      # My_LicensePlate_Model class
+│   ├── video_mode.py      # Video file processing
+│   ├── track_smoothing.py # Temporal smoothing
+│   ├── visualization.py   # Bounding box rendering
+│   └── train.py           # Model training
+├── scripts/
+│   └── split_dataset.py   # Dataset splitting
+├── main.py                # CLI entry point
+├── pyproject.toml         # Poetry config
+├── dist/
+│   └── *.whl              # Built package
+├── Dockerfile
+├── docker-compose.yaml
+├── .dockerignore
+├── .gitignore
+└── README.md
 ```
 
-## Как запускать
+## Installation with Poetry
 
-### 1) Обучение
+### Prerequisites
 
 ```bash
-python3 main.py train
+pip install poetry
 ```
 
-### 2) Оценка модели
+### Install dependencies
 
 ```bash
-python3 main.py evaluate \
-  --model runs/detect/detect/train/weights/best.pt \
-  --images data/test/images \
-  --labels data/test/labels \
-  --iou 0.5 \
-  --conf 0.5 \
-  --plot \
-  --output evaluation_results.jsons
+git clone https://github.com/uaneere/license-plate-detection.git
+cd license-plate-detection
+
+poetry install
+
+poetry run pip install ultralytics
+poetry run pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+poetry run python -c "import torch; print(torch.cuda.is_available())"
+
+poetry env activate
 ```
 
-### 3) Обработка видео
+## Building .whl Package
 
 ```bash
-python3 main.py video \
-  --input test.mp4 \
-  --output output.mp4 \
-  --model runs/detect/detect/train/weights/best.pt \
-  --conf 0.5 \
-  --show
+poetry build
+```
+
+### What's inside .whl?
+
+```
+src/__init__.py
+src/logger.py
+src/model_impl.py
+src/video_mode.py
+src/train.py
+main.py
+```
+
+- ❌ No model weights (.pt)
+- ❌ No dataset (data/)
+- ❌ No venv
+- ❌ No runs/
+
+## Dataset Preparation
+
+### Option 1: Use ready dataset
+
+```bash
+# Download from Roboflow
+# Place images and labels in data/train/ and data/valid/
+# Create data/data.yaml
+```
+
+### Option 2: Create your own dataset
+
+```bash
+# Markup video with Roboflow, Label Studio, or CVAT
+# Export in YOLO format
+# Split dataset
+python scripts/split_dataset.py
+```
+
+### data.yaml structure
+
+```yaml
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 1
+names: ['License-Plate']
+```
+
+## Training
+
+```bash
+poetry run python main.py train-cmd --data data/data.yaml --epochs 30 --batch 8
+```
+
+### Training results
+
+| Metric     | Value  |
+|------------|--------|
+| mAP50      | 0.743  |
+| mAP50-95   | 0.412  |
+| Precision  | 0.853  |
+| Recall     | 0.701  |
+
+## Usage
+
+### Video processing
+
+```bash
+poetry run python main.py video \
+  -i test.mp4 \
+  -o output.mp4 \
+  -m runs/detect/train/weights/best.pt \
+  --conf 0.05 --smooth --show 
+  # модель получилась слишком неуверенная, работает хорошо при низком conf <0.1, закибербуллили
+```
+
+### Model info
+
+```bash
+poetry run python main.py info -m runs/detect/train/weights/best.pt
 ```
 
 ## Docker
 
-Сборка:
+### Add your test data in directory "input"
+
+### Run video processing
 
 ```bash
-docker compose build
+# Use one of these methods
+docker build -t lpd .
+docker run --rm \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/runs:/app/runs \
+  -v $(pwd)/output:/app/output \
+  -v $(pwd)/input:/app/input \
+  lpd \
+  video -i /app/input/test.mp4 -o /app/output/result.mp4 -m /app/runs/detect/train/weights/best.pt --conf 0.05
+
+docker compose run --rm app video -i /app/input/test.mp4 -o /app/output/result.mp4 -m /app/runs/detect/train/weights/best.pt --conf 0.05
 ```
 
-Показать help:
+
+## Install from .whl
 
 ```bash
-docker compose up
-```
+pip install dist/license_plate_detection-0.1.0-py3-none-any.whl
 
-Запустить конкретную команду:
-
-```bash
-docker compose run --rm app python3 main.py info
-docker compose run --rm app python3 main.py video -i test.mp4 -o output.mp4
-```
-
-Логи доступны в контейнере и на хосте по пути:
-
-```text
-./data/log_file.log
+lpd video -i input.mp4 -o output.mp4 -m best.pt
 ```

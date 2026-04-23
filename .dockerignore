@@ -1,0 +1,10 @@
+*
+!src
+!src/**
+!main.py
+!pyproject.toml
+!requirements.txt
+!README.md
+!dist
+!dist/*.whl
+!poetry.lock

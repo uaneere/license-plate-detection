@@ -15,9 +15,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install poetry
+
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --no-root && \
+    pip uninstall -y torch torchvision && \
+    pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
+    pip install ultralytics
 
 COPY . .
 
-CMD ["python3", "main.py", "--help"]
+ENTRYPOINT ["python3", "main.py"]
+CMD ["--help"]

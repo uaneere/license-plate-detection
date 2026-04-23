@@ -6,7 +6,10 @@ services:
     container_name: license-plate-detection
     working_dir: /app
     volumes:
-      - ./:/app
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./runs:/app/runs
+      - ./input:/app/input 
     environment:
       - PYTHONUNBUFFERED=1
     stdin_open: true

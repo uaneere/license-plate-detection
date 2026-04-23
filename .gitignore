@@ -9,7 +9,6 @@ venv/
 ENV/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -35,7 +34,6 @@ data/test/
 *.png
 *.npy
 log_file.log
-
 
 # IDE
 .vscode/
@@ -64,4 +62,14 @@ runs/
 Thumbs.db
 
 # Docker
-*.logdata.rar
+*.log
+
+# Archives
+*.rar
+*.zip
+*.tar.gz
+
+# dist
+dist/*
+!dist/*.whl
+!dist/*.tar.gz
