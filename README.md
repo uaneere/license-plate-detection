@@ -174,3 +174,5 @@ lpd video -i input.mp4 -o output.mp4 -m best.pt
 ## Data resources
 
 https://youtu.be/dQw4w9WgXcQ?si=5XVbnMgDK9blrGiR
+
+https://drive.google.com/file/d/1WBHSMCVVi2ovRT3qwcPumzD_B8lgI0z8/view?usp=sharing
