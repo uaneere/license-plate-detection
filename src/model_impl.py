@@ -15,8 +15,8 @@ class My_LicensePlate_Model:
         self.model_path = Path(model_path)
         self.default_infer_imgsz = default_infer_imgsz
         if not self.model_path.exists():
-            log.warning(f"Model file not found: {self.model_path}. Loading default YOLOv8n.")
-            self.model = YOLO("yolov8n.pt")
+            log.warning(f"Model file not found: {self.model_path}. Loading default YOLO11l.")
+            self.model = YOLO("yolo11l.pt")
         else:
             log.info(f"Loading model from {self.model_path}")
             self.model = YOLO(str(self.model_path))
