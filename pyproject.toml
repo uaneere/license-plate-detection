@@ -2,7 +2,10 @@
 name = "license-plate-detection"
 version = "0.1.0"
 description = "License plate detection system using YOLO"
-authors = ["uaneere <rus.agafonov29@gmail.com>"]
+authors = [
+    "uaneere <rus.agafonov29@gmail.com>",
+    "cht-h <chernikoaan@yandex.com>"
+]
 readme = "README.md"
 packages = [
     { include = "src" },
