@@ -170,3 +170,7 @@ pip install dist/license_plate_detection-0.1.0-py3-none-any.whl
 
 lpd video -i input.mp4 -o output.mp4 -m best.pt
 ```
+
+## Data resources
+
+https://youtu.be/dQw4w9WgXcQ?si=5XVbnMgDK9blrGiR
