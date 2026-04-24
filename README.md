@@ -1,6 +1,7 @@
 # License Plate Detection System
 
 **Student:** Ruslan Agafonov & Angelina Chernikova
+
 **Group:** 972401
 
 ## Description
